@@ -23,6 +23,12 @@ class TimeEmbedding(nn.Module):
 
         return x
 
+"""
+UNET_ResidualBlock: Fuse feature + time -> (Batch_Size, Out_Channels, Height, Width)
+    - feature (Batch_Size, In_Channels, Height, Width) -> (Batch_Size, Out_Channels, Height, Width)
+    - time (1, 1280) -> (1, Out_Channels, 1, 1)
+
+"""
 class UNET_ResidualBlock(nn.Module):
     def __init__(self, in_channels, out_channels, n_time=1280):
         super().__init__()
@@ -75,6 +81,11 @@ class UNET_ResidualBlock(nn.Module):
         # (Batch_Size, Out_Channels, Height, Width) + (Batch_Size, Out_Channels, Height, Width) -> (Batch_Size, Out_Channels, Height, Width)
         return merged + self.residual_layer(residue)
 
+"""
+UNET_AttentionBlock: Fuse feature + text -> (Batch_Size, Out_Channels, Height, Width)
+    - feature (Batch_Size, In_Channels, Height, Width) -> (Batch_Size, In_Channels, Height, Width)
+    - context (Batch_Size, Seq_len, Dim)
+"""
 class UNET_AttentionBlock(nn.Module):
     def __init__(self, n_head: int, n_embd: int, d_context=768):
         super().__init__()
